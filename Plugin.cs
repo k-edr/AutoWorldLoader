@@ -32,9 +32,16 @@ namespace AutoWorldLoader
                     return;
                 }
 
-                var savesRoot = Path.Combine(
+                var savesDir = Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    "SpaceEngineers", "Saves", "76561199017018740");
+                    "SpaceEngineers", "Saves");
+
+                var savesRoot = FindSteamIdFolder(savesDir);
+                if (savesRoot == null)
+                {
+                    Log("ERROR: No Steam ID folder found in Saves");
+                    return;
+                }
 
                 _savePath = Path.Combine(savesRoot, _worldName);
 
@@ -112,6 +119,34 @@ namespace AutoWorldLoader
             else
             {
                 Log("ERROR: No suitable method found");
+            }
+        }
+
+        /// <summary>
+        /// Finds the single numeric Steam ID folder under Saves.
+        /// Returns null if zero or multiple folders exist.
+        /// </summary>
+        private static string FindSteamIdFolder(string savesDir)
+        {
+            try
+            {
+                if (!Directory.Exists(savesDir))
+                    return null;
+
+                var dirs = Directory.GetDirectories(savesDir);
+                if (dirs.Length != 1)
+                {
+                    Log($"Expected 1 folder under Saves, found {dirs.Length}");
+                    return null;
+                }
+
+                Log($"Found Steam ID folder: {Path.GetFileName(dirs[0])}");
+                return dirs[0];
+            }
+            catch (Exception ex)
+            {
+                Log($"Error searching Steam ID folder: {ex}");
+                return null;
             }
         }
 
