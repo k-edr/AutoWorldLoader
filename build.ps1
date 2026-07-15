@@ -52,7 +52,7 @@ Copy-Item -Path $dll.FullName -Destination $dest -Force
 Write-Host "  AutoWorldLoader.dll" -ForegroundColor Green
 
 # Register in config.xml
-Write-Host "[3/3] Updating PluginLoader config.xml..." -ForegroundColor Yellow
+Write-Host "[3/4] Updating PluginLoader config.xml..." -ForegroundColor Yellow
 [xml]$config = Get-Content $configXml -Encoding UTF8
 $pluginsNode = $config.PluginConfig.Plugins
 if (-not $pluginsNode) {
@@ -71,6 +71,18 @@ if (-not $alreadyExists) {
     Write-Host "  Registered: $dest" -ForegroundColor Green
 } else {
     Write-Host "  Already registered" -ForegroundColor Gray
+}
+
+# Deploy templates
+Write-Host "[4/4] Deploying templates..." -ForegroundColor Yellow
+$templateSrc  = Join-Path $scriptDir "Templates"
+$templateDest = Join-Path $env:APPDATA "SpaceEngineers\AutoWorldLoader\Templates"
+if (Test-Path $templateSrc) {
+    New-Item -ItemType Directory -Force -Path $templateDest | Out-Null
+    Copy-Item -Recurse -Force "$templateSrc\*" $templateDest
+    Write-Host "  Templates → $templateDest" -ForegroundColor Green
+} else {
+    Write-Host "  No local templates folder — skipping" -ForegroundColor Gray
 }
 
 Write-Host ""

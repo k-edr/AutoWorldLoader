@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Reflection;
 using VRage.Plugins;
 
@@ -7,12 +6,17 @@ namespace AutoWorldLoader
 {
     /// <summary>
     /// Auto-loads a saved world when the game reaches the main menu.
-    /// Configure via %APPDATA%\SpaceEngineers\AutoWorldLoader.json
+    ///
+    /// Two modes (configured via AutoWorldLoader.json):
+    ///   1. Direct — specify "worldName" of an existing save.
+    ///   2. Template — specify "template" enum name; a fresh copy is
+    ///      created under Saves and loaded. Optionally cleaned up on Dispose.
     /// </summary>
     public class Plugin : IPlugin
     {
         private bool _loaded;
         private string _worldName;
+        private bool _cleanupOnDispose;
         private DateTime _initTime;
         private DateTime _lastCheck;
 
@@ -22,24 +26,20 @@ namespace AutoWorldLoader
             {
                 PluginLog.Info("=== AutoWorldLoader Init ===");
 
-                _worldName = ReadWorldName();
-                if (string.IsNullOrEmpty(_worldName))
+                var config = PluginConfigReader.Read();
+                if (config == null)
                 {
-                    PluginLog.Info("worldName not configured — disabled");
+                    PluginLog.Info("Config not found — disabled");
                     return;
                 }
 
-                var savePath = WorldLoader.ResolveSavePath(_worldName);
-                if (savePath == null)
+                if (config.Template != null)
                 {
-                    PluginLog.Error($"Save not found for world: {_worldName}");
+                    InitTemplateMode(config);
                     return;
                 }
 
-                _initTime = DateTime.UtcNow;
-                _lastCheck = _initTime;
-
-                PluginLog.Info($"Ready. World: {_worldName} at {savePath}");
+                InitDirectMode(config);
             }
             catch (Exception ex)
             {
@@ -78,7 +78,59 @@ namespace AutoWorldLoader
             }
         }
 
-        public void Dispose() { }
+        public void Dispose()
+        {
+            if (_cleanupOnDispose && !string.IsNullOrEmpty(_worldName))
+            {
+                try
+                {
+                    PluginLog.Info($"Dispose: cleaning up {_worldName}");
+                    WorldLoader.Cleanup(_worldName);
+                }
+                catch (Exception ex)
+                {
+                    PluginLog.Error($"Dispose: cleanup failed for {_worldName}", ex);
+                }
+            }
+        }
+
+        // ── Init helpers ──────────────────────────────────────────────
+
+        private void InitTemplateMode(PluginConfig config)
+        {
+            var template = config.Template.Value;
+            _worldName = config.TargetName ?? WorldTemplateRegistry.Get(template).FolderName;
+            _cleanupOnDispose = config.CleanupOnDispose;
+
+            PluginLog.Info($"Template mode: {template} → {_worldName}" +
+                           (_cleanupOnDispose ? " (cleanup on Dispose)" : ""));
+
+            WorldLoader.LaunchFromTemplate(template, _worldName);
+            _loaded = true;
+        }
+
+        private void InitDirectMode(PluginConfig config)
+        {
+            _worldName = config.WorldName;
+            if (string.IsNullOrEmpty(_worldName))
+            {
+                PluginLog.Info("Neither template nor worldName configured — disabled");
+                return;
+            }
+
+            if (!WorldLoader.TryResolveSavePath(_worldName, out var savePath))
+            {
+                PluginLog.Error($"Save not found for world: {_worldName}");
+                return;
+            }
+
+            _initTime = DateTime.UtcNow;
+            _lastCheck = _initTime;
+
+            PluginLog.Info($"Ready. World: {_worldName} at {savePath}");
+        }
+
+        // ── Game helpers ──────────────────────────────────────────────
 
         private static bool IsAtMainMenu()
         {
@@ -91,43 +143,6 @@ namespace AutoWorldLoader
 
             if (staticProp == null) return false;
             return staticProp.GetValue(null) == null;
-        }
-
-        private static string ReadWorldName()
-        {
-            var configPath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                PluginConsts.AppDataFolder, PluginConsts.ConfigFileName);
-
-            if (!File.Exists(configPath))
-            {
-                PluginLog.Info("AutoWorldLoader.json not found");
-                return null;
-            }
-
-            try
-            {
-                var json = File.ReadAllText(configPath);
-                var key = "\"worldName\"";
-                var idx = json.IndexOf(key, StringComparison.OrdinalIgnoreCase);
-                if (idx < 0) return null;
-
-                var colonIdx = json.IndexOf(':', idx + key.Length);
-                if (colonIdx < 0) return null;
-
-                var openQuote = json.IndexOf('"', colonIdx + 1);
-                if (openQuote < 0) return null;
-
-                var closeQuote = json.IndexOf('"', openQuote + 1);
-                if (closeQuote < 0) return null;
-
-                return json.Substring(openQuote + 1, closeQuote - openQuote - 1);
-            }
-            catch (Exception ex)
-            {
-                PluginLog.Error("Config read error", ex);
-                return null;
-            }
         }
     }
 }

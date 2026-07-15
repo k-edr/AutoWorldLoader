@@ -36,6 +36,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="VRage">
@@ -57,9 +58,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Plugin.cs" />
-    <Compile Include="PluginConsts.cs" />
-    <Compile Include="PluginLog.cs" />
-    <Compile Include="WorldLoader.cs" />
+    <Compile Include="Domain\PluginConfig.cs" />
+    <Compile Include="Domain\PluginConsts.cs" />
+    <Compile Include="Domain\WorldTemplate.cs" />
+    <Compile Include="Domain\IWorldTemplate.cs" />
+    <Compile Include="Domain\EmptyWorldTemplateImpl.cs" />
+    <Compile Include="Domain\WorldTemplateRegistry.cs" />
+    <Compile Include="Application\PluginConfigReader.cs" />
+    <Compile Include="Application\WorldLoader.cs" />
+    <Compile Include="Application\WorldSession.cs" />
+    <Compile Include="Infrastructure\PluginLog.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
