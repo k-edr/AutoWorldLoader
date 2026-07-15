@@ -1,7 +1,8 @@
 $ErrorActionPreference = "Stop"
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
-$seBin64    = "D:\SteamLibrary\steamapps\common\SpaceEngineers\Bin64"
+$buildConfig = Get-Content (Join-Path $scriptDir "build-config.json") -Raw | ConvertFrom-Json
+$seBin64    = $buildConfig.seBin64
 $pluginsDir = Join-Path $seBin64 "Plugins"
 $configXml  = Join-Path $pluginsDir "config.xml"
 
