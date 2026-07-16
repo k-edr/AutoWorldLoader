@@ -63,6 +63,7 @@
     <Compile Include="Domain\WorldTemplate.cs" />
     <Compile Include="Domain\IWorldTemplate.cs" />
     <Compile Include="Domain\EmptyWorldTemplateImpl.cs" />
+    <Compile Include="Domain\StarSystemTemplateImpl.cs" />
     <Compile Include="Domain\WorldTemplateRegistry.cs" />
     <Compile Include="Application\PluginConfigReader.cs" />
     <Compile Include="Application\WorldLoader.cs" />

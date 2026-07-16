@@ -10,6 +10,9 @@ namespace AutoWorldLoader
         None,
 
         /// <summary>Empty world, no limits, programmable block on, no mods.</summary>
-        EmptyWorld_NoLimits_WithPB_NoMods
+        EmptyWorld_NoLimits_WithPB_NoMods,
+
+        /// <summary>Star System world, programmable block on, no autosave, no mods.</summary>
+        StarSystem_PbOn_NoAutosave_NoMods
     }
 }

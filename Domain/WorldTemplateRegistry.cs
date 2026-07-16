@@ -23,7 +23,8 @@ namespace AutoWorldLoader
         private static readonly Dictionary<WorldTemplate, IWorldTemplate> _templates
             = new()
             {
-                [WorldTemplate.EmptyWorld_NoLimits_WithPB_NoMods] = new EmptyWorldTemplateImpl()
+                [WorldTemplate.EmptyWorld_NoLimits_WithPB_NoMods] = new EmptyWorldTemplateImpl(),
+                [WorldTemplate.StarSystem_PbOn_NoAutosave_NoMods] = new StarSystemTemplateImpl()
             };
 
         /// <summary>

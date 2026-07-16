@@ -104,6 +104,7 @@ Create `%APPDATA%\SpaceEngineers\AutoWorldLoader.json`:
 | Template | Description |
 |---|---|
 | `EmptyWorld_NoLimits_WithPB_NoMods` | Empty world, no limits, programmable block on, no mods |
+| `StarSystem_PbOn_NoAutosave_NoMods` | Star System world, programmable block on, no autosave, no mods |
 
 ### Adding custom templates
 
