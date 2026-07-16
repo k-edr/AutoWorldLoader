@@ -193,7 +193,12 @@ WorldLoader.LaunchFromTemplate(WorldTemplate.MyCustomWorld, "TestRun_003");
 
 ### Setup
 
-Edit `build-config.json` to point to your Space Engineers `Bin64` folder:
+Copy `build-config.example.json` to `build-config.json` and edit `seBin64`
+to point to your Space Engineers `Bin64` folder:
+
+```powershell
+copy build-config.example.json build-config.json
+```
 
 ```json
 {
