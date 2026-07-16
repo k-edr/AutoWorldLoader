@@ -188,8 +188,11 @@ WorldLoader.LaunchFromTemplate(WorldTemplate.MyCustomWorld, "TestRun_003");
 
 ### Prerequisites
 
-- Visual Studio 2022 (Community or Professional) or MSBuild
-- Space Engineers installed via Steam
+Before setting up the project, make sure you have:
+
+1. **[Space Engineers](https://store.steampowered.com/app/244850/Space_Engineers/)**: Installed on your machine (Steam).
+2. **[MSBuild](https://visualstudio.microsoft.com/downloads/)**: Installed via Visual Studio (2019 or 2022) or Build Tools.
+3. **[Plugin Loader](https://github.com/sepluginloader/PluginLoader)**: Recommended. Having it installed and run at least once generates `Bin64/Plugins/config.xml`, which allows the build script to automatically register the plugin. If missing, the build script will issue a warning and skip registration.
 
 ### Setup
 
