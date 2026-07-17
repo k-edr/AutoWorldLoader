@@ -34,7 +34,11 @@ namespace AutoWorldLoader
                 var line = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff} [{level}] {message}";
                 File.AppendAllText(LogPath, line + Environment.NewLine);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(
+                    $"[PluginLog FAILED] {ex.GetType().Name}: {ex.Message}");
+            }
         }
     }
 }
