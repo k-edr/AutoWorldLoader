@@ -39,14 +39,15 @@ namespace AutoWorldLoader
                 PluginConsts.TemplatesFolder, TemplateFolder(template));
         }
 
-        public static bool LaunchFromTemplate(WorldTemplate template, string targetName = null)
+        public static bool LaunchFromTemplate(WorldTemplate template, string targetName = null, bool loadImmediately = true)
         {
             return LaunchFromTemplate(
                 ResolveTemplatePath(template),
-                targetName ?? TemplateFolder(template));
+                targetName ?? TemplateFolder(template),
+                loadImmediately);
         }
 
-        public static bool LaunchFromTemplate(string templatePath, string targetName)
+        public static bool LaunchFromTemplate(string templatePath, string targetName, bool loadImmediately = true)
         {
             if (string.IsNullOrEmpty(templatePath))
                 throw new ArgumentException("templatePath must not be null or empty", nameof(templatePath));
@@ -75,8 +76,15 @@ namespace AutoWorldLoader
             CopyDirectory(templatePath, destPath);
             FixSessionName(destPath, targetName);
 
-            PluginLog.Info($"WorldLoader: launching {targetName}");
-            LoadByPath(destPath);
+            if (loadImmediately)
+            {
+                PluginLog.Info($"WorldLoader: launching {targetName}");
+                LoadByPath(destPath);
+            }
+            else
+            {
+                PluginLog.Info($"WorldLoader: template copied to {destPath}, load deferred");
+            }
             return true;
         }
 

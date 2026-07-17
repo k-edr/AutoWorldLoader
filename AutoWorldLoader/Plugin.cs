@@ -106,7 +106,7 @@ namespace AutoWorldLoader
                            (_cleanupOnDispose ? " (cleanup on Dispose)" : ""));
 
             // Copy template files immediately, defer session load to Update()
-            WorldLoader.LaunchFromTemplate(template, _worldName);
+            WorldLoader.LaunchFromTemplate(template, _worldName, loadImmediately: false);
 
             _initTime = DateTime.UtcNow;
             _lastCheck = _initTime;
