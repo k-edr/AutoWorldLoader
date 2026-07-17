@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Xml;
 
@@ -179,13 +180,22 @@ namespace AutoWorldLoader
                 }
 
                 var dirs = Directory.GetDirectories(savesDir);
-                if (dirs.Length != 1)
+
+                // Filter to numeric Steam ID directories, skip Cloud/
+                var candidates = dirs
+                    .Where(d => !Path.GetFileName(d).Equals("Cloud", StringComparison.OrdinalIgnoreCase))
+                    .Where(d => long.TryParse(Path.GetFileName(d), out _))
+                    .OrderByDescending(d => Directory.GetLastWriteTimeUtc(d))
+                    .ToList();
+
+                if (candidates.Count == 0)
                 {
-                    PluginLog.Info($"WorldLoader: expected 1 folder under Saves, found {dirs.Length}");
+                    PluginLog.Info($"WorldLoader: no valid Steam ID folder found under {savesDir}");
                     return false;
                 }
 
-                steamIdFolder = dirs[0];
+                steamIdFolder = candidates[0];
+                PluginLog.Info($"WorldLoader: resolved Steam ID folder: {Path.GetFileName(steamIdFolder)}");
                 return true;
             }
             catch (Exception ex)
