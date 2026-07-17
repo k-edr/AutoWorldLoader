@@ -167,7 +167,7 @@ namespace AutoWorldLoader
             return TryFindSteamIdFolder(savesDir, out savesRoot);
         }
 
-        private static bool TryFindSteamIdFolder(string savesDir, out string steamIdFolder)
+        internal static bool TryFindSteamIdFolder(string savesDir, out string steamIdFolder)
         {
             steamIdFolder = null;
 

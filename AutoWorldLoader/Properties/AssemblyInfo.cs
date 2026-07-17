@@ -1,5 +1,8 @@
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+
+[assembly: InternalsVisibleTo("AutoWorldLoader.Tests")]
 
 [assembly: AssemblyTitle("AutoWorldLoader")]
 [assembly: AssemblyDescription("Auto-loads a saved world on game startup")]
