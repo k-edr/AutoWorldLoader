@@ -105,8 +105,12 @@ namespace AutoWorldLoader
             PluginLog.Info($"Template mode: {template} → {_worldName}" +
                            (_cleanupOnDispose ? " (cleanup on Dispose)" : ""));
 
+            // Copy template files immediately, defer session load to Update()
             WorldLoader.LaunchFromTemplate(template, _worldName);
-            _loaded = true;
+
+            _initTime = DateTime.UtcNow;
+            _lastCheck = _initTime;
+            _loaded = false;
         }
 
         private void InitDirectMode(PluginConfig config)
@@ -121,6 +125,7 @@ namespace AutoWorldLoader
             if (!WorldLoader.TryResolveSavePath(_worldName, out var savePath))
             {
                 PluginLog.Error($"Save not found for world: {_worldName}");
+                _loaded = true;
                 return;
             }
 
